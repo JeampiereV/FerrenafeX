@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}FerreñafeX{% endblock %}
+
+{% block content %}
+
+<div class="heading">
+
+    <div>
+        <div class="brand">
+            <span>FERREÑAFE <b>ALERTA</b></span>
+        </div>
+
+        <span class="eyebrow">INICIO</span>
+
+        <h1>Buenos días, {{ user.names }}.</h1>
+
+        <p>ID de usuario: {{ user.dni or "—" }}</p>
+    </div>
+
+    <a class="btn light box-btn" href="/help">
+        Pedir ayuda
+    </a>
+
+</div>
+
+
+<div class="strip">
+
+    <div>
+        <small>TU RANGO SOCIAL</small>
+        <b>{{ user.social_rank_name or 'Vecino solidario' }}</b>
+        <span>{{ user.points }} puntos</span>
+    </div>
+
+    <div>
+        <small>ROL DEL SISTEMA</small>
+        <b>{{ user.role_name }}</b>
+        <span>No define autoridad institucional.</span>
+    </div>
+
+    <div>
+        <small>PRIVACIDAD</small>
+        <b>Ubicación con consentimiento</b>
+        <span>Seguimiento temporal.</span>
+    </div>
+
+</div>
+
+
+<div class="dashgrid">
+
+    <article class="card big">
+
+        <small>AYUDA</small>
+
+        <h2>Una mano, sin exponerte.</h2>
+
+        <p>
+            Solicita apoyo comunitario temporal.
+            El sistema utiliza tu ubicación sólo cuando tú la activas.
+        </p>
+
+        <div class="actions">
+
+            <a class="btn light box-btn" href="/help">
+                Solicitar ayuda
+            </a>
+
+            <a class="btn dark box-btn" href="/map">
+                Mapa
+            </a>
+
+        </div>
+
+    </article>
+
+
+    <article class="card">
+
+        <small>REPORTES</small>
+
+        <h2>Haz visible un problema.</h2>
+
+        <p>
+            Agua, saneamiento, vías, residuos,
+            ambiente e infraestructura.
+        </p>
+
+        <a class="btn light box-btn" href="/report/new">
+            Crear reporte
+        </a>
+
+    </article>
+
+
+    <article class="card">
+
+        <small>SOPORTE</small>
+
+        <h2>¿Necesitas atención?</h2>
+
+        <p>Abre un ticket y recibe seguimiento.</p>
+
+        <a class="btn light box-btn" href="/tickets">
+            Abrir ticket
+        </a>
+
+    </article>
+
+</div>
+
+
+<div class="warning">
+    Ante una emergencia grave, utiliza los canales oficiales correspondientes.
+    FerreñafeX no realiza despacho de servicios externos.
+</div>
+
+
+<style>
+
+.box-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 130px;
+    padding: 12px 18px;
+    margin-top: 12px;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}

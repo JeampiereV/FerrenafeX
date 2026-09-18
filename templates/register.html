@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    FerreñafeX
+{% endblock %}
+
+{% block public %}
+    <div class="auth">
+        <div class="card auth-card wide">
+
+            <a class="brand" href="/">
+                <span>FerreñafeX</span>
+            </a>
+
+            <h1>Únete a la comunidad.</h1>
+
+            <p>
+                Tu cuenta quedará PENDIENTE hasta verificar tu identidad y aprobar tu registro.
+            </p>
+
+            <form id="registerForm" class="grid2">
+
+                <label>
+                    DNI
+                    <input
+                        name="dni"
+                        maxlength="8"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Teléfono
+                    <input
+                        name="phone"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Fecha de nacimiento
+                    <input
+                        name="birth_date"
+                        type="date"
+                    >
+                </label>
+
+                <label>
+                    Nombres
+                    <input
+                        name="names"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Apellidos
+                    <input
+                        name="last_names"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Usuario
+                    <input
+                        name="username"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Correo
+                    <input
+                        name="email"
+                        type="email"
+                    >
+                </label>
+
+                <label>
+                    Contraseña
+                    <input
+                        name="password"
+                        type="password"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Confirmar contraseña
+                    <input
+                        name="confirm_password"
+                        type="password"
+                        required
+                    >
+                </label>
+
+                <button class="btn light full gridfull">
+                    Enviar solicitud
+                </button>
+
+            </form>
+
+            <div class="links">
+                <a href="/login">
+                    ¿Ya tienes Cuenta? Iniciar Sesión
+                </a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/js/auth.js"></script>
+{% endblock %}

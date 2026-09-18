@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Panel Owner{% endblock %}
+{% block content %}
+<div class="heading"><div><span class="eyebrow">OWNER · CONTROL DE LA PLATAFORMA</span><h1>Centro de administración.</h1><p>Revisa miembros, aprueba cuentas, gestiona roles y rangos, atiende autoridades y conserva trazabilidad de las acciones sensibles.</p></div></div>
+
+<div class="card owner-notice"><div><strong>La cuenta Owner es única.</strong><p>Desde aquí administras las cuentas existentes. Aprobar un miembro no le concede permisos administrativos: el rol y el rango social se gestionan por separado.</p></div></div>
+
+<div class="tabs owner-tabs">
+  <button data-tab="stats" onclick="tab('stats')">Resumen</button>
+  <button data-tab="users" onclick="tab('users')">Miembros</button>
+  <button data-tab="authorities" onclick="tab('authorities')">Autoridades</button>
+  <button data-tab="tickets" onclick="tab('tickets')">Tickets</button>
+  <button data-tab="audit" onclick="tab('audit')">Auditoría</button>
+</div>
+<div id="admin"></div>
+
+<div id="memberModal" class="modal-backdrop hidden" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="memberModalTitle">
+    <div class="modal-head"><div><span class="eyebrow">FICHA DEL MIEMBRO</span><h2 id="memberModalTitle">Usuario</h2></div><button type="button" class="modal-close" id="memberModalClose" aria-label="Cerrar ficha del miembro">×</button></div>
+    <div id="memberDetail" class="modal-body"></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/admin.js?v=20260917"></script>{% endblock %}

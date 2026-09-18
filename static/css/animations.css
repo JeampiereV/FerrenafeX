@@ -1,0 +1,5 @@
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseSoft{0%,100%{opacity:.86}50%{opacity:1}}
+.page,.public-card,.panel,.hero{animation:fadeUp .32s ease both}
+.toast.show{animation:fadeUp .18s ease both}
+.loading{animation:pulseSoft 1.1s ease-in-out infinite}

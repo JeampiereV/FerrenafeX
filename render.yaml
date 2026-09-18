@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ferrenafex
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: FERRENAFE_OWNER_CODE
+        sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      - key: DATABASE_PATH
+        value: database/ferre_alerta.db

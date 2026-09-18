@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token }}">
+<meta name="theme-color" content="#0b0c0c">
+<meta name="description" content="FerreñafeX · participación, ayuda y comunicación comunitaria.">
+<title>{% block title %}FerreñafeX{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/responsive.css">
+<link rel="stylesheet" href="/static/css/animations.css">
+{% block head %}{% endblock %}
+</head>
+<body>
+{% if nav_user %}
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" href="/dashboard"><span>Ferreñafe<b>X</b></span></a>
+    <p class="side-label">COMUNIDAD</p>
+    <nav class="side-nav">
+      <a href="/dashboard">Inicio</a><a href="/help">Ayuda</a><a href="/reports">Reportes</a><a href="/map">Mapa</a><a href="/local">Chat Local</a><a href="/forum">Foros</a><a href="/friends">Amigos</a><a href="/rooms">Salas</a><a href="/tickets">Soporte</a><a href="/learning">Aprendizaje</a><a href="/search">Buscar</a><a href="/profile">Perfil</a><a href="/notifications">Notificaciones <em>{{ notification_count }}</em></a>
+    </nav>
+    {% if nav_user.role_name in ['STAFF','OWNER'] %}<p class="side-label">GESTIÓN</p><nav class="side-nav"><a href="/staff">Moderación</a>{% if nav_user.role_name=='OWNER' %}<a href="/owner">Owner</a>{% endif %}</nav>{% endif %}
+    {% if nav_user.role_name in ['AUTHORITY','STAFF','OWNER'] %}<p class="side-label">INSTITUCIONAL</p><nav class="side-nav"><a href="/authority/channel">Autoridades</a></nav>{% endif %}
+    <div class="sidebar-foot"><span>ID {{ nav_user.dni or '—' }}</span><button class="ghost" onclick="FA.logout()">Cerrar sesión</button></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><span class="eyebrow">FERREÑAFE · PARTICIPACIÓN LOCAL</span><div class="top-actions"><a class="top-search" href="/search">Buscar</a><span class="user-mini">@{{ nav_user.username }}</span></div></header>
+    <section class="page">{% block content %}{% endblock %}</section>
+    <footer class="site-footer"><span>© 2026 FerreñafeX. Todos los derechos reservados.</span><span>Participación comunitaria responsable.</span></footer>
+  </main>
+  <nav class="bottom"><a href="/dashboard">Inicio</a><a href="/help">Ayuda</a><a href="/local">Chat Local</a><a href="/friends">Amigos</a><a href="/profile">Perfil</a></nav>
+</div>
+{% else %}<main>{% block public %}{% endblock %}</main>{% endif %}
+<div id="toast" class="toast"></div><script src="/static/js/app.js"></script>{% block scripts %}{% endblock %}
+</body></html>

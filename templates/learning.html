@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% block title %}Aprendizaje · FerreñafeX{% endblock %}{% block content %}
+<div class="page-head"><div><span class="eyebrow">APRENDIZAJE</span><h1>Información para actuar mejor.</h1><p>Material breve de prevención y cuidado comunitario. Esta sección es informativa: no contiene puntuaciones ni tareas.</p></div></div>
+<div id="learning" class="learning-grid"></div>
+{% endblock %}{% block scripts %}<script>async function loadLearning(){const e=document.getElementById('learning');const d=await FA.api('/api/learning');if(!d.ok){e.innerHTML='<div class="card">No se pudo cargar la información.</div>';return}e.innerHTML=(d.modules||[]).map(m=>`<article class="learning-card"><small>${FA.escape(m.topic)}</small><h3>${FA.escape(m.title)}</h3><p>${FA.escape(m.body)}</p></article>`).join('')||'<div class="card">No hay contenido publicado.</div>'}loadLearning()</script>{% endblock %}

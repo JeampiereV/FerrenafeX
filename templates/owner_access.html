@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    FerreñafeX
+{% endblock %}
+
+{% block public %}
+
+    <div class="auth">
+        <div class="card auth-card">
+
+            <a class="brand" href="/">
+                <span>FerreñafeX</span>
+            </a>
+            <h1></h1>
+            <form id="ownerForm">
+
+                <label>
+                    Código Owner
+
+                    <input
+                        name="code"
+                        type="password"
+                        inputmode="numeric"
+                        required
+                    >
+                </label>
+
+                <button class="btn light full">
+                    Entrar como Owner
+                </button>
+
+            </form>
+
+            <div class="links">
+                <a href="/login">
+                    Volver
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/js/auth.js"></script>
+{% endblock %}

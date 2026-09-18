@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    FerreñafeX
+{% endblock %}
+
+{% block public %}
+    <div class="auth">
+        <div class="card auth-card">
+
+            <a class="brand" href="/">
+                <span>FerreñafeX</span>
+            </a>
+
+            <h1>Iniciar sesión</h1>
+
+            <p>Ingresa con tu usuario y contraseña.</p>
+
+            <form id="loginForm">
+                <label>
+                    DNI o usuario
+                    <input name="username" required>
+                </label>
+
+                <label>
+                    Contraseña
+
+                    <div class="pw">
+                        <input
+                            id="pw"
+                            name="password"
+                            type="password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            onclick="FA.toggle('pw')"
+                        >
+                            Ver
+                        </button>
+                    </div>
+                </label>
+
+                <button class="btn light full">
+                    Entrar
+                </button>
+            </form>
+
+            <div class="links">
+                <a href="/forgot-password">
+                    ¿Olvidaste tu contraseña?
+                </a>
+
+                <a href="/register">
+                    Crear cuenta
+                </a>
+            </div>
+
+            <div class="owner-row">
+                <span></span>
+
+                <a href="/owner-access">
+                    ¿Eres Owner?
+                </a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/js/auth.js"></script>
+{% endblock %}
