@@ -1,5 +1,6 @@
 # FerreñafeX
-
+Funcionando en https://ferrenafex.onrender.com 
+BETA
 Plataforma web comunitaria para Ferreñafe orientada a reportes, ayuda voluntaria, comunicación local, prevención y participación responsable.
 
 ## Tecnologías
