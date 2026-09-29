@@ -4,7 +4,7 @@ def dist(a,b,c,d):
     if None in (a,b,c,d):return None
     R=6371000; p=radians(a); q2=radians(c); dp=radians(c-a); dl=radians(d-b); z=sin(dp/2)**2+cos(p)*cos(q2)*sin(dl/2)**2; return R*2*atan2(sqrt(z),sqrt(1-z))
 def nearby(lat,lon,radius):
-    rows=q("SELECT h.*,u.username FROM help_requests h JOIN users u ON u.id=h.user_id WHERE h.status='active' AND h.sharing_location=1")
+    rows=q("SELECT h.*,u.id AS user_id,u.username,u.names,u.last_names,u.dni FROM help_requests h JOIN users u ON u.id=h.user_id WHERE h.status='active' AND h.sharing_location=1 AND (h.location_expires_at IS NULL OR h.location_expires_at>CURRENT_TIMESTAMP)")
     out=[]
     for r in rows:
         d=dist(lat,lon,r['latitude'],r['longitude'])

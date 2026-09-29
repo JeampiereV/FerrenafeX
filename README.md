@@ -1,5 +1,6 @@
 # FerreñafeX
-
+Funcionando en https://ferrenafex.onrender.com 
+BETA
 Plataforma web comunitaria para Ferreñafe orientada a reportes, ayuda voluntaria, comunicación local, prevención y participación responsable.
 
 ## Tecnologías
@@ -28,7 +29,7 @@ Windows:
 
 ```powershell
 .venv\Scripts\activate
-python -m pip install --upgrade pip
+py -m pip install --upgrade pip
 py -m pip install flask
 pip install -r requirements.txt
 ```
@@ -58,57 +59,33 @@ python app.py
 
 Abre `http://127.0.0.1:5000`.
 
-## Identificación por DNI
+## Identificación de cuentas
 
-El DNI es el identificador público de cuenta. El registro exige un DNI peruano de 8 dígitos y no permite duplicados. El inicio de sesión acepta DNI o nombre de usuario.
+Cada usuario tiene un `users.id` interno generado por SQLite y separado del DNI. El ID interno se utiliza para relaciones técnicas y administración; el DNI se trata como dato personal y no se publica en vistas comunitarias.
 
-Los comandos administrativos que requieren identificar a otra persona utilizan DNI, no el ID interno de SQLite. El campo entero `users.id` se conserva únicamente como clave técnica para las relaciones de la base de datos.
+## Mapa y GPS
 
-## Mapa
+La página Mapa utiliza Leaflet sobre OpenStreetMap. Todos los usuarios autenticados pueden consultar los reportes y ayudas activas que tengan ubicación disponible. Las posiciones de reportes y ayudas se muestran de forma aproximada en la vista comunitaria.
 
-La página Mapa utiliza Leaflet sobre OpenStreetMap. El backend entrega reportes y solicitudes de ayuda que poseen coordenadas. Las coordenadas se aproximan antes de enviarse al navegador para reducir exposición de ubicación.
+El botón **Ubicarme** usa el GPS del navegador para centrar el mapa y mostrar tu posición exacta en tu propio dispositivo. No la publica por sí solo.
 
-Para probar geolocalización en producción el sitio debe funcionar con HTTPS y el usuario debe conceder permiso al navegador. En desarrollo local, los navegadores permiten geolocalización en `localhost`/`127.0.0.1`.
+El botón **Compartir ubicación** activa `watchPosition` para recibir actualizaciones de GPS y publicar temporalmente la posición exacta dentro del flujo autorizado de ayuda. El usuario puede detener el seguimiento y el sistema deja de compartir la ubicación al finalizar o cancelar la ayuda.
 
-El mapa no realiza seguimiento permanente. La ubicación personal sólo se solicita cuando el usuario pulsa `Usar mi ubicación`.
+La geolocalización del navegador requiere permiso del usuario y, para acceso por Internet desde un celular, un contexto seguro como HTTPS.
+
+Si el GPS no está disponible, los reportes y solicitudes pueden seleccionar el punto manualmente sobre el mapa.
 
 ## Reportes
 
-Los reportes se muestran en la sección Reportes y también pueden aparecer en el Mapa cuando cuentan con coordenadas. El identificador público tiene formato `FX-XXXXXXXXXX`.
+Los reportes comunican incidencias de la comunidad. Pueden incluir categoría, descripción, prioridad, ubicación y una fotografía como evidencia opcional. No se utilizan como repositorio de documentos administrativos.
 
-## Aprendizaje
+## Chat y administración
 
-Aprendizaje es una sección informativa. Sólo presenta contenidos publicados por la plataforma; no muestra puntos, rangos ni botones para completar módulos.
+La interfaz utiliza botones y acciones visuales; no es necesario escribir comandos con `/`. En los chats administrativos, sólo el Owner puede eliminar un chat completo o eliminar una cantidad determinada de mensajes recientes.
 
-## Chat Local
+## Contraseñas
 
-La antigua sección Local se denomina Chat Local. La ruta `/local` se conserva para no romper enlaces existentes.
-
-## Comandos
-
-El sistema procesa comandos en backend.
-
-```text
-/help
-/rango list
-/rango set RANGO DNI
-/rango remove DNI
-/party add DNI
-/party remove DNI
-/party invite DNI
-/party members
-/party info
-/party leave
-```
-
-Los permisos se verifican en Python y no se confía en el navegador para autorizar operaciones.
-
-Ejemplo:
-
-```text
-/rango set Colaborador 12345678
-/party add 12345678
-```
+Las contraseñas se guardan mediante `hashlib.scrypt`. Ningún usuario, incluido el Owner, puede recuperar o visualizar la contraseña actual. Desde **Ver ficha** el Owner puede reemplazar la contraseña de un miembro y, en la ficha del Owner, establecer una nueva contraseña para la propia cuenta. También puede generar una contraseña temporal y verla antes de guardarla. El código de acceso Owner es independiente de la contraseña de la cuenta.
 
 ## Owner
 

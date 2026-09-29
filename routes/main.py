@@ -34,10 +34,24 @@ def profile_photo():
  if err:return jsonify(ok=False,message=err),400
  rel=Path(saved['path']).name
  x('UPDATE users SET profile_photo=?,updated_at=CURRENT_TIMESTAMP WHERE id=?',(rel,uid));return jsonify(ok=True,message='Foto actualizada.')
+@bp.get('/api/users')
+def users_directory():
+ uid=session.get('user_id')
+ if not uid:return jsonify(ok=False,message='No autenticado.'),401
+ rows=q("SELECT u.id,u.username,u.names,u.last_names,u.profile_photo,r.name role_name FROM users u JOIN roles r ON r.id=u.role_id WHERE u.status='approved' AND u.id<>? ORDER BY u.names,u.last_names",(uid,))
+ return jsonify(ok=True,users=[dict(r) for r in rows])
+
 @bp.get('/learning')
 def learning():return render_template('learning.html')
 @bp.get('/api/learning')
-def learning_api():return jsonify(ok=True,modules=[dict(r) for r in q('SELECT id,title,topic,body FROM learning_modules WHERE active=1')])
+def learning_api():return jsonify(ok=True,modules=[dict(r) for r in q('SELECT id,title,topic,body,details FROM learning_modules WHERE active=1')])
+@bp.post('/api/admin/learning')
+def learning_create():
+    uid=session.get('user_id')
+    if not uid or not q("SELECT 1 FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=? AND r.name='OWNER'",(uid,),one=True):return jsonify(ok=False,message='Solo Owner puede crear contenido.'),403
+    d=request.get_json() or {};title=str(d.get('title','')).strip()[:120];topic=str(d.get('topic','')).strip()[:80];body=str(d.get('body','')).strip()[:500];details=str(d.get('details','')).strip()[:4000]
+    if not title or not topic or not body or not details:return jsonify(ok=False,message='Completa todos los campos.'),400
+    mid=x('INSERT INTO learning_modules(title,topic,body,details,points) VALUES(?,?,?,?,0)',(title,topic,body,details));return jsonify(ok=True,id=mid,message='Contenido de aprendizaje publicado.')
 @bp.post('/api/learning/<int:mid>/complete')
 def learning_complete(mid):
  from services.gamification_service import award,badge

@@ -1,2 +1,42 @@
-{% extends 'base.html' %}{% block title %}Chat · FerreñafeX{% endblock %}
-{% block content %}<div class="page-head"><div><span class="eyebrow">CHAT PRIVADO</span><h1>{{ target.names }} {{ target.last_names }}</h1><p>@{{ target.username }} · Conversación entre amigos.</p></div><a class="btn ghost" href="/friends">Volver</a></div><section class="chat-panel"><div id="chatMessages" class="chat-messages"></div><div class="command-row"><input id="chatInput" placeholder="Escribe un mensaje..." maxlength="4000"><button class="btn primary" onclick="Chat.send()">Enviar</button></div></section>{% endblock %}{% block scripts %}<script>const CHAT_USER_ID={{target.id}};const CURRENT_USER_ID={{nav_user.id}};</script><script src="/static/js/chat.js"></script>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Chat con {{ target.names }} · FerreñafeX{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">CHAT PRIVADO</span>
+    <h1>{{ target.names }} {{ target.last_names }}</h1>
+    <p>@{{ target.username }} · Conversación privada.</p>
+  </div>
+  <div class="actions">
+    {% if nav_user.role_name == 'OWNER' %}
+    <button class="btn danger" type="button" id="deleteChatAllBtn">Eliminar chat</button>
+    <button class="btn dark" type="button" id="deleteChatLatestBtn">Eliminar últimos</button>
+    {% endif %}
+    <a class="btn ghost" href="/friends">Volver</a>
+  </div>
+</div>
+<section class="chat-panel">
+  <div class="chat-status-line"><span id="chatSyncStatus">Conectado</span><span>Actualización automática</span></div>
+  <div id="chatMessages" class="chat-messages"></div>
+  <div class="command-row">
+    <input id="chatInput" placeholder="Escribe un mensaje..." maxlength="4000" autocomplete="off">
+    <button class="btn primary" id="chatSendBtn" type="button">Enviar</button>
+  </div>
+</section>
+{% if nav_user.role_name == 'OWNER' %}
+<div id="deleteLatestModal" class="modal-backdrop hidden" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteLatestTitle">
+    <div class="modal-head"><div><span class="eyebrow">ADMINISTRACIÓN</span><h2 id="deleteLatestTitle">Eliminar últimos mensajes</h2></div><button type="button" class="modal-close" id="closeDeleteLatest" aria-label="Cerrar">×</button></div>
+    <div class="modal-body">
+      <p>Indica cuántos mensajes recientes quieres eliminar de esta conversación.</p>
+      <label>Cantidad<input id="deleteLatestAmount" type="number" min="1" max="200" value="10"></label>
+      <div class="actions"><button class="btn ghost" type="button" id="cancelDeleteLatest">Cancelar</button><button class="btn danger" type="button" id="confirmDeleteLatest">Eliminar mensajes</button></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>const CHAT_USER_ID={{target.id}};const CURRENT_USER_ID={{nav_user.id}};const IS_OWNER={{ 'true' if nav_user.role_name == 'OWNER' else 'false' }};</script>
+<script src="/static/js/chat.js?v=20260929-3"></script>
+{% endblock %}

@@ -45,9 +45,9 @@ def decision(rid):
     if st not in ('approved','rejected','revoked'):return jsonify(ok=False,message='Estado inválido.'),400
     x('UPDATE authority_requests SET status=?,reviewed_by=?,reviewed_at=CURRENT_TIMESTAMP WHERE id=?',(st,session['user_id'],rid))
     if st=='approved':
-        x("UPDATE users SET role_id=(SELECT id FROM roles WHERE name='AUTHORITY'),authority_type=? WHERE id=?",(a['authority_type'],a['user_id']))
+        x("UPDATE users SET role_id=(SELECT id FROM roles WHERE name='MEMBER'),authority_type=? WHERE id=?",(a['authority_type'],a['user_id']))
         notify(a['user_id'],'Autoridad verificada','Tu solicitud fue aprobada dentro de FerreñafeX.','authority','/authority/channel')
-    if st=='revoked':x("UPDATE users SET role_id=(SELECT id FROM roles WHERE name='CITIZEN'),authority_type=NULL WHERE id=?",(a['user_id'],))
+    if st=='revoked':x("UPDATE users SET role_id=(SELECT id FROM roles WHERE name='MEMBER'),authority_type=NULL WHERE id=?",(a['user_id'],))
     log(session['user_id'],'authority.decision','authority_request',rid,{'status':st});return jsonify(ok=True,message='Solicitud actualizada.')
 @bp.post('/api/authority/reinforcement')
 @require_permission('authority.reinforcement')

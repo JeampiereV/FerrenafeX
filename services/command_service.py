@@ -23,6 +23,32 @@ def run(uid,text,room=None,context='general'):
     cmd=p[0].lower()
     if cmd=='/help':
         return {'ok':True,'commands':commands(uid,context)}
+    if cmd=='/say':
+        if not has_permission(uid,'admin.dashboard'):
+            return {'ok':False,'message':'Solo el Owner puede utilizar /say.'}
+        if len(p)<3 or p[1] not in ('1','2','3'):
+            return {'ok':False,'message':'Sintaxis: /say 1|2|3 MENSAJE'}
+        raw=' '.join(p[2:]).strip()
+        if not raw:return {'ok':False,'message':'Escribe un mensaje.'}
+        import html,re
+        raw=raw[:500]
+        parts=re.split(r'(&l)',html.escape(raw,quote=False),flags=re.IGNORECASE)
+        out=[]
+        bold=False
+        for part in parts:
+            if part.lower()=='&l':
+                bold=True
+            elif part:
+                out.append(f'<strong>{part}</strong>' if bold else part)
+                bold=False
+        colors={'1':'green','2':'red','3':'white'}
+        from database import x
+        aid=x('INSERT INTO announcements(created_by,message,color,bold) VALUES(?,?,?,?)',(uid,' '.join(out),colors[p[1]],1 if '<strong>' in ' '.join(out) else 0))
+        x('UPDATE announcements SET active=0 WHERE id<>? AND active=1',(aid,))
+        log(uid,'announcement.created','announcement',aid,{'source':'/say','color':colors[p[1]]})
+        for u in q("SELECT id FROM users WHERE status='approved' AND id<>?",(uid,)):
+            notify(u['id'],'Nuevo anuncio global',raw,'announcement','/dashboard')
+        return {'ok':True,'message':'Anuncio global publicado.','announcement':{'id':aid,'message':' '.join(out),'color':colors[p[1]]}}
     if cmd=='/rango':
         if len(p)<2:return {'ok':False,'message':'Sintaxis: /rango list | /rango set RANGO DNI | /rango remove DNI'}
         if p[1]=='list':
@@ -41,7 +67,7 @@ def run(uid,text,room=None,context='general'):
         if p[1]=='remove':
             if len(p)!=3:return {'ok':False,'message':'Sintaxis: /rango remove DNI'}
             if not has_permission(uid,'admin.ranks.write'):return {'ok':False,'message':'No tienes permisos para ejecutar este comando.'}
-            target=q('SELECT id FROM users WHERE dni=?',(p[2],),one=True)
+            target=q('SELECT id FROM users WHERE id=? OR dni=?',(p[2],p[2]),one=True)
             if not target:return {'ok':False,'message':'No se encontró un usuario con ese DNI.'}
             target=target['id']
             if not q('SELECT id FROM users WHERE id=?',(target,),one=True):return {'ok':False,'message':'No se encontró el usuario indicado.'}
@@ -49,11 +75,18 @@ def run(uid,text,room=None,context='general'):
     if cmd.startswith('/party'):
         if not room:return {'ok':False,'message':'Este comando debe ejecutarse dentro de una sala.'}
         mem=q('SELECT * FROM room_members WHERE room_id=? AND user_id=?',(room,uid),one=True)
-        r=q('SELECT * FROM rooms WHERE id=? AND status=\'active\'',(room,),one=True)
-        if not mem or not r:return {'ok':False,'message':'No tienes acceso a esta sala.'}
+        r=q("SELECT * FROM rooms WHERE id=? AND status='active'",(room,),one=True)
+        if not r or (not mem and r['visibility']!='public'):return {'ok':False,'message':'No tienes acceso a esta sala.'}
+        if not mem: mem={'member_role':'guest'}
         if cmd=='/party members':
             return {'ok':True,'members':[dict(m) for m in q('SELECT rm.user_id,rm.member_role,u.username,u.names,u.last_names FROM room_members rm JOIN users u ON u.id=rm.user_id WHERE rm.room_id=?',(room,))]}
         if cmd=='/party info':return {'ok':True,'room':dict(r)}
+        if cmd in ('/party public','/party priv'):
+            if not has_permission(uid,'room.manage') or mem['member_role'] not in ('owner','admin'):
+                return {'ok':False,'message':'No tienes permisos para cambiar la privacidad.'}
+            vis='public' if cmd=='/party public' else 'private'
+            x('UPDATE rooms SET visibility=? WHERE id=?',(vis,room));log(uid,'room.visibility','room',room,{'visibility':vis})
+            return {'ok':True,'message':f'La sala ahora es {vis}.'}
         if cmd=='/party leave':
             if mem['member_role']=='owner':return {'ok':False,'message':'El creador no puede salir sin cerrar o transferir la sala.'}
             x('DELETE FROM room_members WHERE room_id=? AND user_id=?',(room,uid));log(uid,'room.leave','room',room);return {'ok':True,'message':'Has salido de la sala.'}
@@ -61,7 +94,7 @@ def run(uid,text,room=None,context='general'):
             if not has_permission(uid,'room.manage') or mem['member_role'] not in ('owner','admin'):
                 return {'ok':False,'message':'No tienes permisos para administrar esta sala.'}
             if len(p)!=3:return {'ok':False,'message':f'Sintaxis: {cmd} ID'}
-            target=q('SELECT id FROM users WHERE dni=?',(p[2],),one=True)
+            target=q('SELECT id FROM users WHERE id=? OR dni=?',(p[2],p[2]),one=True)
             if not target:return {'ok':False,'message':'No se encontró un usuario con ese DNI.'}
             target=target['id']
             if not q("SELECT id FROM users WHERE id=? AND status='approved'",(target,),one=True):return {'ok':False,'message':'No se encontró el usuario.'}
@@ -69,7 +102,7 @@ def run(uid,text,room=None,context='general'):
         if cmd=='/party remove':
             if not has_permission(uid,'room.manage') or mem['member_role'] not in ('owner','admin'):return {'ok':False,'message':'No tienes permisos para administrar esta sala.'}
             if len(p)!=3:return {'ok':False,'message':'Sintaxis: /party remove DNI'}
-            target=q('SELECT id FROM users WHERE dni=?',(p[2],),one=True)
+            target=q('SELECT id FROM users WHERE id=? OR dni=?',(p[2],p[2]),one=True)
             if not target:return {'ok':False,'message':'No se encontró un usuario con ese DNI.'}
             target=target['id']
             target_mem=q('SELECT * FROM room_members WHERE room_id=? AND user_id=?',(room,target),one=True)

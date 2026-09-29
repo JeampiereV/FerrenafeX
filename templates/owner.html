@@ -10,7 +10,8 @@
   <button data-tab="users" onclick="tab('users')">Miembros</button>
   <button data-tab="authorities" onclick="tab('authorities')">Autoridades</button>
   <button data-tab="tickets" onclick="tab('tickets')">Tickets</button>
-  <button data-tab="audit" onclick="tab('audit')">Auditoría</button>
+  <button data-tab="announcements" onclick="tab('announcements')">Anuncios</button>
+  <button data-tab="audit" onclick="tab('audit')">Auditoría</button><button data-tab="badges" onclick="tab('badges')">Insignias</button><button data-tab="codes" onclick="tab('codes')">Códigos</button>
 </div>
 <div id="admin"></div>
 
@@ -19,6 +20,6 @@
     <div class="modal-head"><div><span class="eyebrow">FICHA DEL MIEMBRO</span><h2 id="memberModalTitle">Usuario</h2></div><button type="button" class="modal-close" id="memberModalClose" aria-label="Cerrar ficha del miembro">×</button></div>
     <div id="memberDetail" class="modal-body"></div>
   </div>
-</div>
+</div><div id="editModal" class="modal-backdrop hidden"><div class="modal-card"><div class="modal-head"><div><span class="eyebrow">EDITAR</span><h2 id="editModalTitle">Editar</h2></div><button class="modal-close" onclick="closeEditModal()">×</button></div><div class="modal-body" id="editModalBody"></div></div></div>
 {% endblock %}
-{% block scripts %}<script src="/static/js/admin.js?v=20260917"></script>{% endblock %}
+{% block scripts %}<script src="/static/js/admin.js?v=20260929"></script><script src="/static/js/admin_overrides.js?v=20260929"></script>{% endblock %}

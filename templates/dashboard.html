@@ -1,135 +1,17 @@
 {% extends 'base.html' %}
-
-{% block title %}FerreñafeX{% endblock %}
-
+{% block title %}FerreñafeX · Inicio{% endblock %}
 {% block content %}
-
-<div class="heading">
-
-    <div>
-        <div class="brand">
-            <span>FERREÑAFE <b>ALERTA</b></span>
-        </div>
-
-        <span class="eyebrow">INICIO</span>
-
-        <h1>Buenos días, {{ user.names }}.</h1>
-
-        <p>ID de usuario: {{ user.dni or "—" }}</p>
-    </div>
-
-    <a class="btn light box-btn" href="/help">
-        Pedir ayuda
-    </a>
-
-</div>
-
-
+<div class="heading"><div><span class="eyebrow">INICIO</span><h1>Buenos días, {{ user.names }}.</h1><p>ID de usuario: <strong>{{ user.id }}</strong></p></div><a class="btn light" href="/help">Ayuda y reporte</a></div>
 <div class="strip">
-
-    <div>
-        <small>TU RANGO SOCIAL</small>
-        <b>{{ user.social_rank_name or 'Vecino solidario' }}</b>
-        <span>{{ user.points }} puntos</span>
-    </div>
-
-    <div>
-        <small>ROL DEL SISTEMA</small>
-        <b>{{ user.role_name }}</b>
-        <span>No define autoridad institucional.</span>
-    </div>
-
-    <div>
-        <small>PRIVACIDAD</small>
-        <b>Ubicación con consentimiento</b>
-        <span>Seguimiento temporal.</span>
-    </div>
-
+<div><small>ROL DEL SISTEMA</small><b>{% if user.role_name == 'OWNER' %}OWNER{% else %}MIEMBRO{% endif %}</b><span>Rango de acceso de FerreñafeX.</span></div>
+<div><small>PRIVACIDAD</small><b>Ubicación con consentimiento</b><span>Seguimiento temporal.</span></div>
 </div>
-
-
 <div class="dashgrid">
-
-    <article class="card big">
-
-        <small>AYUDA</small>
-
-        <h2>Una mano, sin exponerte.</h2>
-
-        <p>
-            Solicita apoyo comunitario temporal.
-            El sistema utiliza tu ubicación sólo cuando tú la activas.
-        </p>
-
-        <div class="actions">
-
-            <a class="btn light box-btn" href="/help">
-                Solicitar ayuda
-            </a>
-
-            <a class="btn dark box-btn" href="/map">
-                Mapa
-            </a>
-
-        </div>
-
-    </article>
-
-
-    <article class="card">
-
-        <small>REPORTES</small>
-
-        <h2>Haz visible un problema.</h2>
-
-        <p>
-            Agua, saneamiento, vías, residuos,
-            ambiente e infraestructura.
-        </p>
-
-        <a class="btn light box-btn" href="/report/new">
-            Crear reporte
-        </a>
-
-    </article>
-
-
-    <article class="card">
-
-        <small>SOPORTE</small>
-
-        <h2>¿Necesitas atención?</h2>
-
-        <p>Abre un ticket y recibe seguimiento.</p>
-
-        <a class="btn light box-btn" href="/tickets">
-            Abrir ticket
-        </a>
-
-    </article>
-
+<article class="card big"><small>AYUDA Y REPORTE</small><h2>Ayuda, reporta y consulta el mapa.</h2><p>Solicita ayuda o haz visible un problema desde un mismo espacio. Tú eliges cuándo compartir tu ubicación.</p><div class="actions"><a class="btn light" href="/help">Abrir Ayuda</a><a class="btn dark" href="/help#mapa">Ver mapa</a></div></article>
+<article class="card"><small>CHAT LOCAL</small><h2>Habla con tu comunidad.</h2><p>Conversaciones públicas y temas de interés local.</p><a class="btn dark" href="/local">Entrar</a></article>
+<article class="card"><small>SOPORTE</small><h2>Atención privada.</h2><p>Tu ticket se convierte en un canal privado con soporte.</p><a class="btn dark" href="/tickets">Abrir soporte</a></article>
 </div>
-
-
-<div class="warning">
-    Ante una emergencia grave, utiliza los canales oficiales correspondientes.
-    FerreñafeX no realiza despacho de servicios externos.
-</div>
-
-
-<style>
-
-.box-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 130px;
-    padding: 12px 18px;
-    margin-top: 12px;
-    border-radius: 10px;
-    text-decoration: none;
-}
-
-</style>
-
+{% if is_vip %}<article class="card"><small>ANUNCIO VIP</small><h2>Publica un aviso</h2><form id="vipAnnouncementForm" class="grid2"><label class="gridfull">Mensaje<textarea name="message" rows="3" maxlength="500" required></textarea></label><label>Color<select name="color"><option value="green">Verde</option><option value="dark">Oscuro</option><option value="white">Blanco</option><option value="red">Rojo</option></select></label><label>Duración de animación<select name="animation_duration_ms"><option value="220">220 ms</option><option value="300" selected>300 ms</option><option value="500">500 ms</option></select></label><label>Animación<select name="animation"><option value="fade">Fade</option><option value="slide">Deslizamiento</option><option value="soft">Suave</option></select></label><label>Expiración<input name="expires_at" type="datetime-local"></label><button class="btn light gridfull">Publicar anuncio VIP</button></form></article>{% endif %}
+<div class="warning">Ayudar es voluntario y comunitario. Ante una emergencia grave, utiliza los canales oficiales correspondientes.</div>
 {% endblock %}
+{% block scripts %}{% if is_vip %}<script>document.getElementById('vipAnnouncementForm')?.addEventListener('submit',async e=>{e.preventDefault();const d=await FA.api('/api/admin/announcements',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});FA.toast(d.message,d.ok?'ok':'err');if(d.ok)e.target.reset()});</script>{% endif %}{% endblock %}

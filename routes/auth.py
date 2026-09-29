@@ -22,7 +22,7 @@ def register():
  if d['password']!=d['confirm_password'] or len(d['password'])<8:return jsonify(ok=False,message='Contraseña inválida o no coincidente.'),400
  if not re.fullmatch(r'\d{8}',str(d['dni'])):return jsonify(ok=False,message='El DNI debe contener 8 dígitos.'),400
  if q('SELECT 1 FROM users WHERE dni=? OR lower(username)=lower(?)',(d['dni'],d['username']),one=True):return jsonify(ok=False,message='DNI o usuario ya registrado.'),409
- uid=x('INSERT INTO users(dni,names,last_names,username,email,phone,birth_date,password_hash,role_id,status) VALUES(?,?,?,?,?,?,?,?,?,?)',(d['dni'],d['names'],d['last_names'],d['username'],d.get('email') or None,d['phone'],d.get('birth_date') or None,hash_password(d['password']),role_id('CITIZEN'),'pending'));refresh_rank(uid);log(uid,'user.created','user',uid,{'status':'pending'});return jsonify(ok=True,message='Registro enviado. Tu cuenta queda pendiente de aprobación.')
+ uid=x('INSERT INTO users(dni,names,last_names,username,email,phone,birth_date,password_hash,role_id,status) VALUES(?,?,?,?,?,?,?,?,?,?)',(d['dni'],d['names'],d['last_names'],d['username'],d.get('email') or None,d['phone'],d.get('birth_date') or None,hash_password(d['password']),role_id('MEMBER'),'pending'));refresh_rank(uid);log(uid,'user.created','user',uid,{'status':'pending'});return jsonify(ok=True,message='Registro enviado. Tu cuenta queda pendiente de aprobación.')
 @bp.post('/api/login')
 def login():
  d=request.get_json() or {}

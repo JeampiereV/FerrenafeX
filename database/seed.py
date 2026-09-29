@@ -17,17 +17,17 @@ def add_user(c,dni,names,last,username,email,phone,password,role,authority_type=
 con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
 with con:
     # Base rows are seeded by app.py, but make seed independently usable.
-    for r in ['CITIZEN','COLLABORATOR','STAFF','AUTHORITY','OWNER']:con.execute('INSERT OR IGNORE INTO roles(name) VALUES(?)',(r,))
+    for r in ['MEMBER','OWNER']:con.execute('INSERT OR IGNORE INTO roles(name) VALUES(?)',(r,))
     for r in [('Vecino solidario',0,'Participación inicial'),('Colaborador',50,'Ayudas confirmadas'),('Comunidad activa',150,'Participación constante'),('Colaborador destacado',400,'Aportes destacados'),('Embajador comunitario',1000,'Referente social por participación')]:con.execute('INSERT OR IGNORE INTO social_ranks(name,min_points,description) VALUES(?,?,?)',r)
     if con.execute("SELECT COUNT(*) FROM users WHERE demo_flag=1").fetchone()[0]:
         raise SystemExit('Los datos de demostración ya existen. Elimina la base de datos para reconstruir el entorno demo.')
     ids={}
-    ids['citizen']=add_user(con,'11111111','María','Demo','maria_demo','maria.demo@demo.local','900000001','Demo12345!','CITIZEN')
-    ids['collab']=add_user(con,'22222222','Carlos','Demo','carlos_demo','carlos.demo@demo.local','900000002','Demo12345!','COLLABORATOR')
-    ids['staff']=add_user(con,'33333333','Staff','Demo','staff_demo','staff.demo@demo.local','900000003','Demo12345!','STAFF')
-    ids['police']=add_user(con,'44444444','Policía','Demo','policia_demo','policia.demo@demo.local','900000004','Demo12345!','AUTHORITY','Policía')
-    ids['fire']=add_user(con,'55555555','Bomberos','Demo','bomberos_demo','bomberos.demo@demo.local','900000005','Demo12345!','AUTHORITY','Bomberos')
-    ids['health']=add_user(con,'66666666','Salud','Demo','salud_demo','salud.demo@demo.local','900000006','Demo12345!','AUTHORITY','Salud')
+    ids['citizen']=add_user(con,'11111111','María','Demo','maria_demo','maria.demo@demo.local','900000001','Demo12345!','MEMBER')
+    ids['collab']=add_user(con,'22222222','Carlos','Demo','carlos_demo','carlos.demo@demo.local','900000002','Demo12345!','MEMBER')
+    ids['staff']=add_user(con,'33333333','Staff','Demo','staff_demo','staff.demo@demo.local','900000003','Demo12345!','MEMBER')
+    ids['police']=add_user(con,'44444444','Policía','Demo','policia_demo','policia.demo@demo.local','900000004','Demo12345!','MEMBER','Policía')
+    ids['fire']=add_user(con,'55555555','Bomberos','Demo','bomberos_demo','bomberos.demo@demo.local','900000005','Demo12345!','MEMBER','Bomberos')
+    ids['health']=add_user(con,'66666666','Salud','Demo','salud_demo','salud.demo@demo.local','900000006','Demo12345!','MEMBER','Salud')
     ids['owner']=add_user(con,'77777777','Owner','Demo','owner_demo','owner.demo@demo.local','900000007','DemoOwner123!','OWNER')
     for u in (ids['citizen'],ids['collab'],ids['police']):
         con.execute('INSERT OR IGNORE INTO points(user_id,amount,reason) VALUES(?,?,?)',(u,100,'Datos de demostración'))
