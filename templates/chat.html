@@ -38,5 +38,5 @@
 {% endblock %}
 {% block scripts %}
 <script>const CHAT_USER_ID={{target.id}};const CURRENT_USER_ID={{nav_user.id}};const IS_OWNER={{ 'true' if nav_user.role_name == 'OWNER' else 'false' }};</script>
-<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script><script src="/static/js/chat.js?v=20260929-4"></script>
+<script src="/static/js/chat.js?v=20260929-3"></script>
 {% endblock %}

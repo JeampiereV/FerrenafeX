@@ -4,7 +4,6 @@ from pathlib import Path
 from config import Config
 from database import init_db,close_db,q,x
 from services.csrf_service import get_token, validate_request
-from extensions import socketio
 
 def seed_base():
     for r in ['MEMBER','OWNER'] : x('INSERT OR IGNORE INTO roles(name) VALUES(?)',(r,))
@@ -38,9 +37,7 @@ def create_app(test_config=None):
     from routes.tickets import bp as tickets
     from routes.moderation import bp as moderation
     from routes.search import bp as search
-    from routes.tools import bp as tools
-    for bp in [auth,main,reports,helpbp,comm,admin,authority,tickets,moderation,search,tools]:app.register_blueprint(bp)
-    socketio.init_app(app)
+    for bp in [auth,main,reports,helpbp,comm,admin,authority,tickets,moderation,search]:app.register_blueprint(bp)
 
     @app.before_request
     def expire_access():
@@ -129,35 +126,8 @@ def create_app(test_config=None):
             response.headers['Cache-Control']='no-store'
         return response
 
-    from flask_socketio import emit, join_room
-
-    @socketio.on('connect')
-    def socket_connect():
-        uid=session.get('user_id')
-        if not uid:
-            return False
-        join_room(f'user:{uid}')
-        emit('socket_ready', {'user_id': uid})
-
-    @socketio.on('join_room')
-    def socket_join_room(data):
-        uid=session.get('user_id')
-        try:
-            rid=int((data or {}).get('room_id', 0))
-        except (TypeError, ValueError):
-            return
-        if not uid or not rid:
-            return
-        room=q("SELECT * FROM rooms WHERE id=? AND status='active'", (rid,), one=True)
-        member=q('SELECT * FROM room_members WHERE room_id=? AND user_id=?', (rid,uid), one=True)
-        owner=q("SELECT 1 FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=? AND r.name='OWNER'", (uid,), one=True)
-        if not room or (not member and not owner and room['visibility'] != 'public'):
-            return
-        join_room(f'room:{rid}')
-        emit('room_joined', {'room_id': rid})
-
     return app
 app=create_app()
 
 if __name__=='__main__':
-    socketio.run(app,host='0.0.0.0',port=int(__import__('os').getenv('PORT','5000')),debug=__import__('os').getenv('FLASK_DEBUG','0')=='1')
+    app.run(host='0.0.0.0',port=int(__import__('os').getenv('PORT','5000')),debug=__import__('os').getenv('FLASK_DEBUG','0')=='1')

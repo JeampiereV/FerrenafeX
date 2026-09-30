@@ -158,16 +158,3 @@ FerreñafeX/
 ├── uploads/
 └── tests/
 ```
-
-
-## Actualización: chat en tiempo real y Herramientas → OCR
-
-- Chat privado y salas usan Socket.IO para entregar mensajes sin recargar la página.
-- Se conserva una consulta periódica de respaldo para reconexiones y recuperación de mensajes.
-- Los mensajes se identifican por ID para evitar duplicados en el DOM.
-- Se agregó `Herramientas → OCR` con PDF, PNG, JPG/JPEG, TIFF, BMP y GIF.
-- La integración OCR usa exclusivamente el REST API oficial de OCR Web Service.
-- Configura `ONLINEOCR_USERNAME` y `ONLINEOCR_LICENSE_CODE` únicamente como variables de entorno del servidor.
-- Los archivos OCR no se guardan en SQLite ni en almacenamiento permanente.
-- La página permite copiar y exportar el texto reconocido a TXT, DOCX, PDF y XLSX.
-- En Render, el servicio se ejecuta con Gunicorn `gthread` para soportar Socket.IO en modo threading.
