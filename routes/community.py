@@ -2,6 +2,7 @@ from flask import Blueprint,request,jsonify,session,render_template
 from database import q,x
 from services.notification_service import notify
 from services.audit_service import log
+from extensions import socketio
 bp=Blueprint('community',__name__)
 
 def auth(): return session.get('user_id')
@@ -114,7 +115,13 @@ def chat_send(user_id):
     uid=auth();d=request.get_json() or {};c=str(d.get('content','')).strip()
     if not uid or not is_friend(uid,user_id):return jsonify(ok=False,message='Solo puedes enviar mensajes a tus amigos.'),403
     if not c:return jsonify(ok=False,message='Mensaje vacío.'),400
-    mid=x('INSERT INTO private_messages(sender_id,receiver_id,content) VALUES(?,?,?)',(uid,user_id,c[:4000]));notify(user_id,'Nuevo mensaje', 'Tienes un nuevo mensaje privado.','chat',f'/chat/{uid}');return jsonify(ok=True,id=mid,message='Mensaje enviado.')
+    mid=x('INSERT INTO private_messages(sender_id,receiver_id,content) VALUES(?,?,?)',(uid,user_id,c[:4000]))
+    message=q('SELECT m.*,u.username sender_username FROM private_messages m JOIN users u ON u.id=m.sender_id WHERE m.id=?',(mid,),one=True)
+    payload=dict(message)
+    socketio.emit('private_message', payload, room=f'user:{user_id}')
+    socketio.emit('private_message', payload, room=f'user:{uid}')
+    notify(user_id,'Nuevo mensaje', 'Tienes un nuevo mensaje privado.','chat',f'/chat/{uid}')
+    return jsonify(ok=True,id=mid,message='Mensaje enviado.',message_data=payload)
 
 
 def _owner(uid):
@@ -204,9 +211,12 @@ def room_message(rid):
  uid=auth();r,mem=room_access(uid,rid);d=request.get_json() or {};msg=str(d.get('message','')).strip()[:4000]
  if not r or (not mem and not is_owner(uid) and r['visibility']!='public'):return jsonify(ok=False,message='No tienes acceso a esta sala.'),403
  if not msg:return jsonify(ok=False,message='Escribe un mensaje.'),400
- mid=x('INSERT INTO room_messages(room_id,sender_id,message) VALUES(?,?,?)',(rid,uid,msg));
+ mid=x('INSERT INTO room_messages(room_id,sender_id,message) VALUES(?,?,?)',(rid,uid,msg))
+ message=q('SELECT m.*,u.username,u.names,u.last_names,u.dni FROM room_messages m JOIN users u ON u.id=m.sender_id WHERE m.id=?',(mid,),one=True)
+ payload=dict(message)
+ socketio.emit('room_message', payload, room=f'room:{rid}')
  for m in q('SELECT user_id FROM room_members WHERE room_id=? AND user_id<>?',(rid,uid,)):notify(m['user_id'],'Nuevo mensaje en sala',f'Hay un nuevo mensaje en {r["name"]}.','room',f'/rooms/{rid}')
- return jsonify(ok=True,id=mid,message='Mensaje enviado.')
+ return jsonify(ok=True,id=mid,message='Mensaje enviado.',message_data=payload)
 
 @bp.post('/api/rooms/<int:rid>/members')
 def room_add_member(rid):

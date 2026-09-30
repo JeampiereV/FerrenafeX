@@ -10,7 +10,7 @@ class Config:
     SECRET_KEY=os.getenv('FLASK_SECRET_KEY') or 'change-this-secret-before-production'
     OWNER_CODE=os.getenv('FERRENAFE_OWNER_CODE','62863117')
     DATABASE_PATH=str(BASE_DIR/os.getenv('DATABASE_PATH','database/ferre_alerta.db'))
-    MAX_CONTENT_LENGTH=5*1024*1024
+    MAX_CONTENT_LENGTH=100*1024*1024
     SESSION_COOKIE_HTTPONLY=True
     SESSION_COOKIE_SAMESITE='Lax'
     SESSION_COOKIE_SECURE=os.getenv('SESSION_COOKIE_SECURE','1' if os.getenv('RENDER') else '0') == '1'

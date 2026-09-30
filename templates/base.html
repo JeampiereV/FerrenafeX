@@ -23,13 +23,13 @@
     <a class="brand" href="/dashboard"><span>Ferreñafe<b>X</b></span></a>
     <p class="side-label">COMUNIDAD</p>
     <nav class="side-nav">
-      <a href="/dashboard">Inicio</a><a href="/help">Ayuda y reporte</a><a href="/local">Chat Local</a><a href="/forum">Foros</a><a href="/friends">Amigos</a><a href="/rooms">Salas</a><a href="/tickets">Soporte</a><a href="/learning">Aprendizaje</a><a href="/search">Buscar</a><a href="/profile">Perfil</a><a href="/notifications">Notificaciones <em>{{ notification_count }}</em></a>
+      <a href="/dashboard">Inicio</a><a href="/help">Ayuda y reporte</a><a href="/local">Chat Local</a><a href="/forum">Foros</a><a href="/friends">Amigos</a><a href="/rooms">Salas</a><a href="/tickets">Soporte</a><a href="/learning">Aprendizaje</a><a href="/tools">Herramientas</a><a href="/search">Buscar</a><a href="/profile">Perfil</a><a href="/notifications">Notificaciones <em>{{ notification_count }}</em></a>
     </nav>
     {% if nav_user.role_name == 'OWNER' %}<p class="side-label">GESTIÓN</p><nav class="side-nav"><a href="/owner">Owner</a></nav>{% endif %}
     <div class="sidebar-foot"><span>ID {{ nav_user.id }}</span><button class="ghost" onclick="FA.logout()">Cerrar sesión</button></div>
   </aside>
   <main class="main">
-    {% if global_announcement %}<div id="globalAnnouncement" class="global-announcement ann-{{ global_announcement.color }} fx-ann-{{ global_announcement.animation }}" data-announcement-id="{{ global_announcement.id }}" style="--ann-duration:{{ global_announcement.animation_duration_ms }}ms;--ann-font:{{ global_announcement.font|e }}"><div class="announcement-inner"><span class="announcement-message{% if global_announcement.bold %} is-bold{% endif %}">{{ global_announcement.display_message|e }}</span><button type="button" onclick="FA.dismissAnnouncement()" aria-label="Cerrar anuncio">×</button></div></div>{% endif %}
+    {% if global_announcement %}<div id="globalAnnouncement" class="global-announcement ann-{{ global_announcement.color }} fx-ann-{{ global_announcement.animation }}" data-announcement-id="{{ global_announcement.id }}" style="--ann-duration:{{ global_announcement.animation_duration_ms }}ms;--ann-font:{{ global_announcement.font|e }}"><div class="announcement-inner"><span class="announcement-message{% if global_announcement.bold %} is-bold{% endif %}">{{ global_announcement.display_message|e }}</span></div></div>{% endif %}
     <header class="topbar">
   <button class="mobile-menu-toggle" type="button" onclick="FA.toggleMobileMenu()" aria-label="Abrir menú" aria-controls="mobileMenu" aria-expanded="false">☰</button>
   <span class="eyebrow">FERREÑAFE · PARTICIPACIÓN LOCAL</span>
@@ -42,7 +42,7 @@
   <aside id="mobileMenu" class="mobile-menu" aria-hidden="true">
     <div class="mobile-menu-head"><a class="brand" href="/dashboard"><span>Ferreñafe<b>X</b></span></a><button type="button" onclick="FA.closeMobileMenu()" aria-label="Cerrar menú">×</button></div>
     <nav class="mobile-nav">
-      <a href="/dashboard">Inicio</a><a href="/help">Ayuda y reporte</a><a href="/learning">Aprendizaje</a><a href="/local">Chat Local</a><a href="/friends">Amigos</a><a href="/notifications">Notificaciones <em>{{ notification_count }}</em></a><a href="/profile">Perfil</a><a href="/search">Buscar</a><a href="/rooms">Salas</a><a href="/tickets">Soporte</a><a href="/forum">Foros</a>
+      <a href="/dashboard">Inicio</a><a href="/help">Ayuda y reporte</a><a href="/learning">Aprendizaje</a><a href="/tools">Herramientas</a><a href="/local">Chat Local</a><a href="/friends">Amigos</a><a href="/notifications">Notificaciones <em>{{ notification_count }}</em></a><a href="/profile">Perfil</a><a href="/search">Buscar</a><a href="/rooms">Salas</a><a href="/tickets">Soporte</a><a href="/forum">Foros</a>
       {% if nav_user.role_name == 'OWNER' %}<div class="mobile-menu-section">OWNER</div><a href="/owner">Owner</a><a href="/owner#users">Miembros</a><a href="/owner#announcements">Anuncios</a>{% endif %}
       <button class="mobile-logout" type="button" onclick="FA.logout()">Cerrar sesión</button>
     </nav>
